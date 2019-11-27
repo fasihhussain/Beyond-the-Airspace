@@ -2,14 +2,16 @@
 #include "TextureManager.h"
 #include "GameObject.h"
 #include "Map.h"
-
+#include"ECS.h"
+#include "Component.h"
 SDL_Texture *playerTx;
 SDL_Rect srcR, destR;
 GameObject *player;
 Map* map;
 
 SDL_Renderer* Game::renderer = nullptr;
-
+Manager manager;
+auto& newPlayer(manager.addEntity());
 Game::Game() {}
 
 Game::~Game() {}
@@ -44,16 +46,21 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
 
         player = new GameObject("assets/plane.png", 0, 0);
         map = new Map();
+        newPlayer.addcomponent<PositionComponent>();
+        newPlayer.getComponent<PositionComponent>().setPos(500,500);
+
     }
-    else
-    {
-        isRunning = false;
-    }
+    // else
+    // {
+    //     isRunning = false;
+    // }
 }
 
 void Game::update()
 {
     player->Update();
+    manager.update();
+    std::cout<<newPlayer.getComponent<PositionComponent>().x()<<","<<newPlayer.getComponent<PositionComponent>().y()<<std::endl;
 }
 
 void Game::render()

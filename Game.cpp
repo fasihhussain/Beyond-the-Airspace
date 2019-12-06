@@ -1,18 +1,36 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "GameObject.h"
 #include "Map.h"
-#include"ECS.h"
-#include "Component.h"
+#include "ECS/Components.h"
+#include "Vector2D.h"
+#include "Collision.h"
+#include "ECS/ECS.cpp"
+
 SDL_Texture *playerTx;
 SDL_Rect srcR, destR;
-GameObject *player;
-Map* map;
+SDL_Event Game::event;
 
-SDL_Renderer* Game::renderer = nullptr;
+Map *map;
+
+SDL_Renderer *Game::renderer = nullptr;
+
+std::vector<ColliderComponent *> Game::colliders;
+
 Manager manager;
-auto& newPlayer(manager.addEntity());
-Game::Game() {}
+auto &player(manager.addEntity());
+auto &enemy(manager.addEntity());
+
+enum groupLabels : std::size_t
+{
+    groupMap,
+    groupPlayers,
+    groupEnemies,
+    groupColliders
+};
+
+Game::Game()
+{
+}
 
 Game::~Game() {}
 
@@ -44,31 +62,73 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         }
         isRunning = true;
 
-        player = new GameObject("assets/plane.png", 0, 0);
         map = new Map();
-        newPlayer.addcomponent<PositionComponent>();
-        newPlayer.getComponent<PositionComponent>().setPos(500,500);
 
+        player.addComponent<TransformComponent>(0.0f, 0.0f, 250, 250, 1);
+        player.addComponent<SpriteComponent>("assets/player_plane.png", true);
+        player.addComponent<KeyboardController>();
+        player.addComponent<ColliderComponent>("player");
+        player.addGroup(groupPlayers);
+
+        enemy.addComponent<TransformComponent>(500.0f, 0.0f, 200, 252, 1);
+        enemy.addComponent<SpriteComponent>("assets/enemy_plane.png");
+        enemy.addComponent<ColliderComponent>("enemy");
+        enemy.addGroup(groupEnemies);
     }
-    // else
-    // {
-    //     isRunning = false;
-    // }
+    else
+    {
+        isRunning = false;
+    }
 }
 
 void Game::update()
 {
-    player->Update();
+    manager.refresh();
     manager.update();
-    std::cout<<newPlayer.getComponent<PositionComponent>().x()<<","<<newPlayer.getComponent<PositionComponent>().y()<<std::endl;
+
+    for (auto cc : colliders)
+    {
+        Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
+    }
 }
+
+auto &tiles(manager.getGroup(groupMap));
+auto &players(manager.getGroup(groupPlayers));
+auto &enemies(manager.getGroup(groupEnemies));
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    map ->DrawMap();
-    player->Render();
-    //this is where we would add stuff to render
+    SDL_Texture *bgtex = TextureManager::LoadTexture("assets/background.png");
+    int texarr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    for (auto t : texarr)
+    {
+        SDL_Rect src, dest;
+        src.x = src.y = 0;
+        src.h = 720;
+        src.w = 1280;
+
+        dest.y = 0;
+        dest.x = 0 + t * 1080;
+        dest.h = 720;
+        dest.w = 1280;
+
+        TextureManager::Draw(bgtex, src, dest, SDL_FLIP_NONE);
+    }
+
+    for (auto t : tiles)
+    {
+        t->draw();
+    }
+    for (auto p : players)
+    {
+        p->draw();
+    }
+    for (auto e : enemies)
+    {
+        e->draw();
+    }
+
     SDL_RenderPresent(renderer);
 }
 
@@ -82,7 +142,7 @@ void Game::clean()
 
 void Game::handleEvents()
 {
-    SDL_Event event;
+
     SDL_PollEvent(&event);
     switch (event.type)
     {
@@ -93,4 +153,11 @@ void Game::handleEvents()
     default:
         break;
     }
+}
+
+void Game::AddTile(int id, int x, int y)
+{
+    auto &tile(manager.addEntity());
+    tile.addComponent<TileComponent>(x, y, 32, 32, id);
+    tile.addGroup(groupColliders);
 }

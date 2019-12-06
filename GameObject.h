@@ -13,6 +13,8 @@ public:
     void Render();
 
 private:
+    int x_col;
+    int y_col;
     int xpos;
     int ypos;
 

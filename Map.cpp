@@ -1,45 +1,30 @@
 #include "Map.h"
-#include "TextureManager.h"
-
-int lvl1[10] = {0,0,0,0,0,0,0,0,0,0};
+#include "Game.h"
+#include <fstream>
 
 Map::Map()
 {
-    sky = TextureManager::LoadTexture("assets/background.png");
-
-    LoadMap(lvl1);
-    src.x = src.y = 0;
-    src.w = 1280;
-    src.h = 720;
-    dest.w = 1280;
-    dest.h = 720;
-
-    dest.x = dest.y = 0;
 }
 
-void Map::LoadMap(int arr[10])
+Map::~Map()
 {
-    for (int i=0;i<10;i++)
-    {
-        map[i] = arr[i];
-    }
 }
 
-void Map::DrawMap()
-{   
-    int type;
-    for (int i=0;i<10;i++)
-    {
-        type = map[i];
-        dest.x = i*1280;
+void Map::LoadMap(std::string path, int sizeX, int sizeY)
+{
+    char tile;
+    std::fstream mapFile;
+    mapFile.open(path);
 
-        switch (type)
+    for (int y = 0; y < sizeY; y++)
+    {
+        for (int x = 0; x < sizeX; x++)
         {
-        case 0:
-            TextureManager::Draw(sky,src,dest);
-            break;
-        default:
-            break;
+            mapFile.get(tile);
+            Game::AddTile(atoi(&tile), x * 32, y * 32);
+            mapFile.ignore();
         }
     }
+
+    mapFile.close();
 }

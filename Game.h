@@ -8,7 +8,10 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include <vector>
 #endif
+
+class ColliderComponent;
 
 class Game
 {
@@ -21,9 +24,16 @@ public:
    void update();
    void render();
    void clean();
-   static SDL_Renderer* renderer;
+   static SDL_Renderer *renderer;
+   static SDL_Event event;
+   static std::vector<ColliderComponent *> colliders;
+   static void AddTile(int id, int x, int y);
 
-   bool running() { return isRunning; }
+   bool
+   running()
+   {
+      return isRunning;
+   }
 
 private:
    int cnt = 0;

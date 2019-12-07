@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Game.h"
+#include "TextureManager.h"
 #include <fstream>
 
 Map::Map()
@@ -28,3 +29,4 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
     mapFile.close();
 }
+

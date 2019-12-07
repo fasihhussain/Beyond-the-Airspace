@@ -27,7 +27,7 @@ public:
         switch (tileID)
         {
         case 0:
-            path = "assets/enemy_plane.png";
+
             break;
 
         default:

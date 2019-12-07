@@ -5,12 +5,15 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "ECS/ECS.cpp"
+#include "Background.h"
 
 SDL_Texture *playerTx;
 SDL_Rect srcR, destR;
+
 SDL_Event Game::event;
 
 Map *map;
+Background bg;
 
 SDL_Renderer *Game::renderer = nullptr;
 
@@ -85,6 +88,7 @@ void Game::update()
 {
     manager.refresh();
     manager.update();
+    bg.update();
 
     for (auto cc : colliders)
     {
@@ -99,22 +103,8 @@ auto &enemies(manager.getGroup(groupEnemies));
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    SDL_Texture *bgtex = TextureManager::LoadTexture("assets/background.png");
-    int texarr[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    for (auto t : texarr)
-    {
-        SDL_Rect src, dest;
-        src.x = src.y = 0;
-        src.h = 720;
-        src.w = 1280;
 
-        dest.y = 0;
-        dest.x = 0 + t * 1080;
-        dest.h = 720;
-        dest.w = 1280;
-
-        TextureManager::Draw(bgtex, src, dest, SDL_FLIP_NONE);
-    }
+    bg.Draw();
 
     for (auto t : tiles)
     {

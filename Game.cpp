@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "ECS/ECS.cpp"
 #include "Background.h"
+#include "Time.h"
 
 SDL_Texture *playerTx;
 SDL_Rect srcR, destR;
@@ -14,6 +15,7 @@ SDL_Event Game::event;
 
 Map *map;
 Background bg;
+Time time;
 
 SDL_Renderer *Game::renderer = nullptr;
 
@@ -90,6 +92,12 @@ void Game::update()
     manager.update();
     bg.update();
 
+    if (time.check_Time(60000))
+    {
+        std::cout << "Level Pass" << std::endl;
+
+        Game::isRunning = false;
+    }
     for (auto cc : colliders)
     {
         Collision::AABB(player.getComponent<ColliderComponent>(), *cc);

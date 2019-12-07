@@ -69,16 +69,19 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
 
         map = new Map();
 
+        bg.Load();
+        //bg.Draw();
+
         player.addComponent<TransformComponent>(0.0f, 0.0f, 250, 250, 1);
         player.addComponent<SpriteComponent>("assets/player_plane.png", true);
         player.addComponent<KeyboardController>();
         player.addComponent<ColliderComponent>("player");
         player.addGroup(groupPlayers);
 
-        enemy.addComponent<TransformComponent>(500.0f, 0.0f, 200, 252, 1);
-        enemy.addComponent<SpriteComponent>("assets/enemy_plane.png");
-        enemy.addComponent<ColliderComponent>("enemy");
-        enemy.addGroup(groupEnemies);
+        //enemy.addComponent<TransformComponent>(500.0f, 0.0f, 200, 252, 1);
+        //enemy.addComponent<SpriteComponent>("assets/enemy_plane.png");
+        //enemy.addComponent<ColliderComponent>("enemy");
+        //enemy.addGroup(groupEnemies);
     }
     else
     {

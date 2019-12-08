@@ -11,8 +11,7 @@
 #include <vector>
 #endif
 
-
-
+class AssetManager;
 class ColliderComponent;
 
 class Game
@@ -29,7 +28,16 @@ public:
    static SDL_Renderer *renderer;
    static SDL_Event event;
    static std::vector<ColliderComponent *> colliders;
+   static AssetManager *assets;
    static void AddTile(int id, int x, int y);
+   enum groupLabels : std::size_t
+   {
+      groupMap,
+      groupPlayers,
+      groupEnemies,
+      groupColliders,
+      groupBullets
+   };
 
    bool
    running()

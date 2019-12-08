@@ -8,7 +8,7 @@ Time::Time()
 Uint32 Time::get_Time()
 {
     current_time = SDL_GetTicks();
-    std::cout << current_time << std::endl;
+    //std::cout << current_time << std::endl;
     return current_time;
 }
 

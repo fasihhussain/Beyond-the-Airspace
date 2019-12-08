@@ -1,38 +1,16 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "Map.h"
-#include "ECS/Components.h"
 #include "Vector2D.h"
 #include "Collision.h"
 #include "ECS/ECS.cpp"
-#include "Background.h"
-#include "Time.h"
-
-SDL_Texture *playerTx;
-SDL_Rect srcR, destR;
+#include "Definitions.h"
+#include "AssetManager.h"
 
 SDL_Event Game::event;
-
-Map *map;
-Background bg;
-Time time;
-
 SDL_Renderer *Game::renderer = nullptr;
-
 std::vector<ColliderComponent *> Game::colliders;
 
-Manager manager;
-auto &player(manager.addEntity());
-auto &enemy(manager.addEntity());
-
-enum groupLabels : std::size_t
-{
-    groupMap,
-    groupPlayers,
-    groupEnemies,
-    groupColliders
-};
-
+AssetManager *Game::assets = new AssetManager(&manager);
 Game::Game()
 {
 }
@@ -67,16 +45,21 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         }
         isRunning = true;
 
+        assets->AddTexture("player", "assets/player_plane.png");
+        assets->AddTexture("bullet", "assets/Bullet_3.png");
+
         map = new Map();
 
         bg.Load();
         //bg.Draw();
 
         player.addComponent<TransformComponent>(0.0f, 0.0f, 250, 250, 1);
-        player.addComponent<SpriteComponent>("assets/player_plane.png", true);
+        player.addComponent<SpriteComponent>("player", true);
         player.addComponent<KeyboardController>();
         player.addComponent<ColliderComponent>("player");
         player.addGroup(groupPlayers);
+
+        assets->CreateProjectile(Vector2D(player.getComponent<TransformComponent>().position.x + 235, player.getComponent<TransformComponent>().position.y + 110), Vector2D(2, 0), 300, 1, "bullet");
 
         //enemy.addComponent<TransformComponent>(500.0f, 0.0f, 200, 252, 1);
         //enemy.addComponent<SpriteComponent>("assets/enemy_plane.png");
@@ -88,6 +71,11 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         isRunning = false;
     }
 }
+
+auto &tiles(manager.getGroup(Game::groupMap));
+auto &players(manager.getGroup(Game::groupPlayers));
+auto &enemies(manager.getGroup(Game::groupEnemies));
+auto &bullets(manager.getGroup(Game::groupBullets));
 
 void Game::update()
 {
@@ -105,11 +93,16 @@ void Game::update()
     {
         Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
     }
-}
 
-auto &tiles(manager.getGroup(groupMap));
-auto &players(manager.getGroup(groupPlayers));
-auto &enemies(manager.getGroup(groupEnemies));
+    //for (auto &b : bullets)
+    //{
+    //if (Collision::AABB(player.getComponent<ColliderComponent>().collider, b->getComponent<ColliderComponent>().collider))
+    //{
+    //std::cout << "Bullet hit player" << std::endl;
+    //b->destroy();
+    //}
+    //}
+}
 
 void Game::render()
 {
@@ -117,17 +110,22 @@ void Game::render()
 
     bg.Draw();
 
-    for (auto t : tiles)
+    for (auto &t : tiles)
     {
         t->draw();
     }
-    for (auto p : players)
+    for (auto &p : players)
     {
         p->draw();
     }
-    for (auto e : enemies)
+    for (auto &e : enemies)
     {
         e->draw();
+    }
+
+    for (auto &b : bullets)
+    {
+        b->draw();
     }
 
     SDL_RenderPresent(renderer);
@@ -153,6 +151,18 @@ void Game::handleEvents()
 
     default:
         break;
+    }
+
+    if (Game::event.type == SDL_KEYDOWN)
+    {
+        switch (Game::event.key.keysym.sym)
+        {
+        case SDLK_SPACE:
+            assets->CreateProjectile(Vector2D(player.getComponent<TransformComponent>().position.x + 235, player.getComponent<TransformComponent>().position.y + 110), Vector2D(2, 0), 300, 1, "bullet");
+
+        default:
+            break;
+        }
     }
 }
 

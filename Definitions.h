@@ -15,4 +15,3 @@ static Time time;
 
 static Manager manager;
 auto &player(manager.addEntity());
-auto &enemy(manager.addEntity());

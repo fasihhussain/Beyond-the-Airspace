@@ -1,23 +1,14 @@
 #pragma once
-
-#include "Game.h"
+#include <map>
+#include <string>
+#include "TextureManager.h"
+#include "Vector2D.h"
+#include "ECS\ECS.h"
+#include "ECS\Components.h"
 
 class GameObject
 {
-
-public:
-    GameObject(const char *texturesheet, int x, int y);
-    ~GameObject();
-
-    void Update();
-    void Render();
-
 private:
-    int x_col;
-    int y_col;
-    int xpos;
-    int ypos;
-
-    SDL_Texture *objTexture;
-    SDL_Rect srcRect, destRect;
+public:
+    virtual void init();
 };

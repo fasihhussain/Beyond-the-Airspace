@@ -19,12 +19,12 @@ SDL_Texture *AssetManager::GetTexture(std::string id)
     return textures[id];
 }
 
-void AssetManager::CreateProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id)
+void AssetManager::AddFont(std::string id, std::string path, int fontSize)
 {
-    auto &projectile(manager->addEntity());
-    projectile.addComponent<TransformComponent>(pos.x, pos.y, 42, 190, 0.4);
-    projectile.addComponent<SpriteComponent>(id);
-    projectile.addComponent<ProjectileComponent>(range, speed, vel);
-    projectile.addComponent<ColliderComponent>("Bullet");
-    projectile.addGroup(Game::groupBullets);
+    fonts.emplace(id, TTF_OpenFont(path.c_str(), fontSize));
+}
+
+TTF_Font *AssetManager::GetFont(std::string id)
+{
+    return fonts[id];
 }

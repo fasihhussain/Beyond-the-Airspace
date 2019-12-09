@@ -11,6 +11,7 @@
 #include <vector>
 #endif
 
+class TextManager;
 class AssetManager;
 class ColliderComponent;
 
@@ -20,11 +21,15 @@ public:
    Game();
    ~Game();
 
+   bool lev_com = false;
+   bool gam_over = false;
+
    void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
    void handleEvents();
    void update();
    void render();
    void clean();
+   static TextManager *tex;
    static SDL_Renderer *renderer;
    static SDL_Event event;
    static std::vector<ColliderComponent *> colliders;
@@ -36,7 +41,9 @@ public:
       groupPlayers,
       groupEnemies,
       groupColliders,
-      groupBullets
+      groupBullets,
+      groupScoreUps,
+      groupPowerUps
    };
 
    bool

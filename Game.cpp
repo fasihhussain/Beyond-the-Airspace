@@ -46,6 +46,8 @@ screenDisplay levelComplete;
 
 screenDisplay gameOver;
 
+screenDisplay gamePaused;
+
 AssetManager *Game::assets = new AssetManager(&manager);
 Game::Game()
 {
@@ -101,6 +103,9 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         levelComplete.Load("assets/levelComplete.jpg");
         levelComplete.setDimension(0, 0, 608, 342, 0, 0, 1280, 720);
 
+        gamePaused.Load("assets/gamePaused.jpg");
+        gamePaused.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
+        
         gameOver.Load("assets/gameOver.jpg");
         gameOver.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
 
@@ -124,6 +129,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     else
     {
         isRunning = false;
+        std::cout<<"2"<<std::endl;
     }
 }
 
@@ -223,8 +229,9 @@ void Game::update()
         {
             if (Collision::AABB(p->getComponent<ColliderComponent>().collider, en->getComponent<ColliderComponent>().collider))
             {
-
+                /****************Just to test******************/
                 p->getComponent<HealthComponent>().take_damage(100);
+                // p->getComponent<HealthComponent>().take_damage(0);
                 std::cout << "Player hit enemy" << std::endl;
                 en->destroy();
 
@@ -268,9 +275,9 @@ void Game::update()
     // //label.getComponent<UILabel>().setAgain(10, 10, "Health : " + str, "arial", black);
     // //player.getComponent<UILabel>().setAgain(200, 10, "Score :" + str1, "arial", black);
     // label.addComponent<UILabel>(10, 10, "Health : " + str, "arial", black);
-    //player.addComponent<UILabel>(200, 10, "Score " + player.getComponent<ScoreComponent>().getScore(), "arial", black);
-    std::cout << "Health : " << player.getComponent<HealthComponent>().health << std::endl;
-    std::cout << "Score : " << player.getComponent<ScoreComponent>().getScore() << std::endl;
+    // player.addComponent<UILabel>(200, 10, "Score " + player.getComponent<ScoreComponent>().getScore(), "arial", black);
+    // std::cout << "Health : " << player.getComponent<HealthComponent>().health << std::endl;
+    // std::cout << "Score : " << player.getComponent<ScoreComponent>().getScore() << std::endl;
 }
 
 void Game::render()
@@ -322,6 +329,23 @@ void Game::render()
             gameOver.Draw();
         }
 
+        if (gam_paused){
+            gamePaused.Draw();
+            // this->render();
+            // std::cout<<"Game is paused"<<std::endl;
+            // while (gam_paused){
+            //     SDL_PollEvent(&event);
+            //     switch (event.key.keysym.sym)
+            //     {
+            //     case SDLK_p:
+            //         gam_paused = false;
+            //         gam_over=false;
+            //         // break;
+            //     }
+            // }
+            // std::cout<<"Game is Paused"<<std::endl;
+        }
+
         label.draw();
     }
     SDL_RenderPresent(renderer);
@@ -343,6 +367,7 @@ void Game::handleEvents()
     {
     case SDL_QUIT:
         isRunning = false;
+        std::cout<<"3"<<std::endl;
         break;
 
     default:
@@ -364,7 +389,11 @@ void Game::handleEvents()
         case SDLK_p:
             gam_over = false;
             lev_com = false;
-
+            gam_paused=!gam_paused;
+            break;
+        // case SDLK_k:
+        //     gam_paused=true;
+        //     break;
         default:
             break;
         }

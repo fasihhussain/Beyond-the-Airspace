@@ -19,7 +19,10 @@ int main(int argc, char *argv[])
 	while (game->running())
 	{
 		frameStart = SDL_GetTicks();
-
+		while (game->gam_paused)
+		{
+			game->handleEvents();
+		}
 		game->handleEvents();
 		game->update();
 		game->render();

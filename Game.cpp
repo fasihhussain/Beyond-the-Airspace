@@ -99,13 +99,16 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         assets->AddFont("arial", "assets/arial.ttf", 16);
 
         explosion.Load("assets/player_plane.png");
+        // explosion.animated = true;
+        // explosion.nframes = 2;
+        // explosion.speed = 100;
 
         levelComplete.Load("assets/levelComplete.jpg");
         levelComplete.setDimension(0, 0, 608, 342, 0, 0, 1280, 720);
 
         gamePaused.Load("assets/gamePaused.jpg");
         gamePaused.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
-        
+
         gameOver.Load("assets/gameOver.jpg");
         gameOver.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
 
@@ -129,7 +132,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     else
     {
         isRunning = false;
-        std::cout<<"2"<<std::endl;
+        std::cout << "2" << std::endl;
     }
 }
 
@@ -142,27 +145,42 @@ auto &scoreups(manager.getGroup(Game::groupScoreUps));
 void Game::update()
 {
     //label.destroy();
+    if (!gam_over)
+    {
+        str = std::to_string((player.getComponent<HealthComponent>().health));
+        str1 = std::to_string(player.getComponent<ScoreComponent>().getScore());
+
+        std::cout << "Health: " << str << std::endl
+                  << "Score: " << str1 << std::endl;
+
+        label.getComponent<UILabel>().SetLabelText("Health : " + str, "arial");
+        player.getComponent<UILabel>().SetLabelText("Score " + str1, "arial");
+        label.getComponent<UILabel>().draw();
+        player.getComponent<UILabel>().draw();
+        // label.getComponent<UILabel>().draw();
+    }
+
     manager.refresh();
     manager.update();
     bg.update();
 
     //player restrict
-    // if ((player.getComponent<TransformComponent>().position.x) < 0)
-    // {
-    //     player.getComponent<TransformComponent>().position.x = 0;
-    // }
-    // if ((player.getComponent<TransformComponent>().position.x) > 1280)
-    // {
-    //     player.getComponent<TransformComponent>().position.x = 1180;
-    // }
-    // if ((player.getComponent<TransformComponent>().position.y) < 0)
-    // {
-    //     player.getComponent<TransformComponent>().position.y = 0;
-    // }
-    // if ((player.getComponent<TransformComponent>().position.y) > 720)
-    // {
-    //     player.getComponent<TransformComponent>().position.y = 720;
-    // }
+    if ((player.getComponent<TransformComponent>().position.x) < 0)
+    {
+        player.getComponent<TransformComponent>().position.x = 0;
+    }
+    if ((player.getComponent<TransformComponent>().position.x) > 1280)
+    {
+        player.getComponent<TransformComponent>().position.x = 1180;
+    }
+    if ((player.getComponent<TransformComponent>().position.y) < 0)
+    {
+        player.getComponent<TransformComponent>().position.y = 0;
+    }
+    if ((player.getComponent<TransformComponent>().position.y) > 720)
+    {
+        player.getComponent<TransformComponent>().position.y = 720;
+    }
 
     if ((time.get_Time() - last_power_arrive) > 31000)
     {
@@ -329,8 +347,11 @@ void Game::render()
             gameOver.Draw();
         }
 
-        if (gam_paused){
+        if (gam_paused && gam_over == false)
+        {
             gamePaused.Draw();
+            std::cout << gam_paused << std::endl
+                      << gam_over << std::endl;
             // this->render();
             // std::cout<<"Game is paused"<<std::endl;
             // while (gam_paused){
@@ -367,7 +388,7 @@ void Game::handleEvents()
     {
     case SDL_QUIT:
         isRunning = false;
-        std::cout<<"3"<<std::endl;
+        std::cout << "3" << std::endl;
         break;
 
     default:
@@ -387,9 +408,9 @@ void Game::handleEvents()
             }
             break;
         case SDLK_p:
-            gam_over = false;
+            // gam_over = false;
             lev_com = false;
-            gam_paused=!gam_paused;
+            gam_paused = !gam_paused;
             break;
         // case SDLK_k:
         //     gam_paused=true;

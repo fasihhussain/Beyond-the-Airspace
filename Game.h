@@ -28,7 +28,9 @@ public:
    //mainmenu *main_m;
    bool menu_flag = true;
    bool help = false;
+   Uint32 pause_time = 0;
    Uint32 level_start = 0;
+   Uint32 pause_start_time = 0;
 
    void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
    void handleEvents();

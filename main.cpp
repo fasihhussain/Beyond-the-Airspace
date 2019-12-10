@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
 		frameStart = SDL_GetTicks();
 		while (game->gam_paused)
 		{
+
 			game->handleEvents();
 		}
 		game->handleEvents();

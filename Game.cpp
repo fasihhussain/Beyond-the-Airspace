@@ -106,8 +106,8 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         levelComplete.Load("assets/levelComplete.jpg");
         levelComplete.setDimension(0, 0, 608, 342, 0, 0, 1280, 720);
 
-        gamePaused.Load("assets/gamePaused.jpg");
-        gamePaused.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
+        gamePaused.Load("assets/paused.png");
+        gamePaused.setDimension(0, 0, 1600, 1600, 420, 100, 400, 360);
 
         gameOver.Load("assets/gameOver.jpg");
         gameOver.setDimension(0, 0, 852, 480, 0, 0, 1280, 720);
@@ -203,7 +203,7 @@ void Game::update()
         e.init(&manager, "enemy");
     }
 
-    if ((time.get_Time() - this->level_start) > 90000)
+    if ((time.get_Time() - (this->level_start + pause_time) > 90000))
     {
         std::cout << "Level Pass" << std::endl;
 
@@ -358,8 +358,7 @@ void Game::render()
     {
         levelComplete.Draw();
     }
-
-    if (gam_over)
+    else if (gam_over)
     {
         gameOver.Draw();
     }
@@ -415,6 +414,17 @@ void Game::handleEvents()
             // gam_over = false;
             lev_com = false;
             gam_paused = !gam_paused;
+            if (gam_paused)
+            {
+                this->pause_start_time = time.get_Time();
+                std::cout << this->pause_start_time << std::endl;
+            }
+            if (!gam_paused)
+            {
+                this->pause_time += time.get_Time() - this->pause_start_time;
+                std::cout << this->pause_time << std::endl;
+            }
+
             break;
         // case SDLK_k:
         //     gam_paused=true;

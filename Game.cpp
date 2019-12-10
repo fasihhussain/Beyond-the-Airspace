@@ -15,10 +15,9 @@
 
 SDL_Event Game::event;
 SDL_Renderer *Game::renderer = nullptr;
-mainmenu main_m;
-bool menu_flag = true;
+
 bool game_flag = false;
-bool help = false;
+//bool help = false;
 std::vector<ColliderComponent *> Game::colliders;
 
 std::string str, str1;
@@ -32,6 +31,8 @@ Enemy e;
 
 Bullet bullet;
 Uint32 last_bullet_fired = 0;
+
+Uint32 last_explosion_appear = 0;
 
 PowerUp power;
 Uint32 last_power_arrive = 0;
@@ -86,7 +87,6 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         {
             std::cout << "Error : SDL_TTF" << std::endl;
         }
-        main_m.LT("assets/MAINbackground.png", "assets/buttons.png", "assets/buttons.png", "assets/buttons.png", "assets/instructions.png");
 
         isRunning = true;
 
@@ -95,10 +95,10 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         assets->AddTexture("enemy", "assets/enemy_plane.png");
         assets->AddTexture("score", "assets/sp.png");
         assets->AddTexture("power", "assets/ps.png");
+        assets->AddTexture("explosion", "assets/explosion.png");
 
         assets->AddFont("arial", "assets/arial.ttf", 16);
 
-        explosion.Load("assets/player_plane.png");
         // explosion.animated = true;
         // explosion.nframes = 2;
         // explosion.speed = 100;
@@ -128,6 +128,8 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
 
         label.addComponent<UILabel>(10, 10, "Health : " + str, "arial", black);
         player.addComponent<UILabel>(200, 10, "Score " + player.getComponent<ScoreComponent>().getScore(), "arial", black);
+
+        player.getComponent<TransformComponent>().position.x += 1;
     }
     else
     {
@@ -141,6 +143,7 @@ auto &enemies(manager.getGroup(Game::groupEnemies));
 auto &bullets(manager.getGroup(Game::groupBullets));
 auto &powerups(manager.getGroup(Game::groupPowerUps));
 auto &scoreups(manager.getGroup(Game::groupScoreUps));
+auto &explosions(manager.getGroup(Game::groupExplosions));
 
 void Game::update()
 {
@@ -150,8 +153,8 @@ void Game::update()
         str = std::to_string((player.getComponent<HealthComponent>().health));
         str1 = std::to_string(player.getComponent<ScoreComponent>().getScore());
 
-        std::cout << "Health: " << str << std::endl
-                  << "Score: " << str1 << std::endl;
+        //std::cout << "Health: " << str << std::endl
+        //<< "Score: " << str1 << std::endl;
 
         label.getComponent<UILabel>().SetLabelText("Health : " + str, "arial");
         player.getComponent<UILabel>().SetLabelText("Score " + str1, "arial");
@@ -200,17 +203,26 @@ void Game::update()
         e.init(&manager, "enemy");
     }
 
-    if (time.check_Time(90000))
+    if ((time.get_Time() - this->level_start) > 90000)
     {
         std::cout << "Level Pass" << std::endl;
 
         lev_com = true;
         //Game::isRunning = false;
     }
-    for (auto cc : colliders)
+
+    if ((time.get_Time() - last_explosion_appear) > 500)
     {
-        Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
+        last_explosion_appear = time.get_Time();
+        for (auto e : explosions)
+        {
+            e->destroy();
+        }
     }
+    //for (auto cc : colliders)
+    //{
+    // Collision::AABB(player.getComponent<ColliderComponent>(), *cc);
+    //}
 
     //std::cout << enemies.size() << std::endl;
 
@@ -235,6 +247,9 @@ void Game::update()
                 if (en->getComponent<HealthComponent>().health <= 0)
                 {
                     player.getComponent<ScoreComponent>().addScore(100);
+
+                    explosion.init(en->getComponent<TransformComponent>().position.x, en->getComponent<TransformComponent>().position.y, &manager, "explosion");
+                    last_explosion_appear = time.get_Time();
                     en->destroy();
                 }
             }
@@ -245,16 +260,22 @@ void Game::update()
     {
         for (auto en : enemies)
         {
-            if (Collision::AABB(p->getComponent<ColliderComponent>().collider, en->getComponent<ColliderComponent>().collider))
+            if (Collision::AABB(p->getComponent<ColliderComponent>(), en->getComponent<ColliderComponent>()))
             {
                 /****************Just to test******************/
                 p->getComponent<HealthComponent>().take_damage(100);
                 // p->getComponent<HealthComponent>().take_damage(0);
                 std::cout << "Player hit enemy" << std::endl;
+                explosion.init(en->getComponent<TransformComponent>().position.x, en->getComponent<TransformComponent>().position.y, &manager, "explosion");
+                last_explosion_appear = time.get_Time();
                 en->destroy();
 
                 if (p->getComponent<HealthComponent>().health <= 0)
                 {
+
+                    this->update();
+                    this->render();
+
                     p->destroy();
                     gam_over = true;
                 }
@@ -301,74 +322,57 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    if (menu_flag == true)
+
+    bg.Draw();
+
+    for (auto &p : players)
     {
-
-        main_m.render();
-        menu_flag = !main_m.checkstart();
+        p->draw();
     }
-    else
+    for (auto &e : enemies)
     {
-
-        bg.Draw();
-
-        for (auto &p : players)
-        {
-            p->draw();
-        }
-        for (auto &e : enemies)
-        {
-            e->draw();
-        }
-
-        for (auto &b : bullets)
-        {
-            b->draw();
-        }
-
-        for (auto &pow : powerups)
-        {
-            pow->draw();
-        }
-        for (auto &sco : scoreups)
-        {
-            sco->draw();
-        }
-
-        label.draw();
-
-        if (lev_com)
-        {
-            levelComplete.Draw();
-        }
-
-        if (gam_over)
-        {
-            gameOver.Draw();
-        }
-
-        if (gam_paused && gam_over == false)
-        {
-            gamePaused.Draw();
-            std::cout << gam_paused << std::endl
-                      << gam_over << std::endl;
-            // this->render();
-            // std::cout<<"Game is paused"<<std::endl;
-            // while (gam_paused){
-            //     SDL_PollEvent(&event);
-            //     switch (event.key.keysym.sym)
-            //     {
-            //     case SDLK_p:
-            //         gam_paused = false;
-            //         gam_over=false;
-            //         // break;
-            //     }
-            // }
-            // std::cout<<"Game is Paused"<<std::endl;
-        }
-
-        label.draw();
+        e->draw();
     }
+
+    for (auto &b : bullets)
+    {
+        b->draw();
+    }
+
+    for (auto &pow : powerups)
+    {
+        pow->draw();
+    }
+    for (auto &sco : scoreups)
+    {
+        sco->draw();
+    }
+    for (auto &explo : explosions)
+    {
+        explo->draw();
+    }
+
+    label.draw();
+
+    if (lev_com)
+    {
+        levelComplete.Draw();
+    }
+
+    if (gam_over)
+    {
+        gameOver.Draw();
+    }
+
+    if (gam_paused && gam_over == false)
+    {
+        gamePaused.Draw();
+        std::cout << gam_paused << std::endl
+                  << gam_over << std::endl;
+    }
+
+    label.draw();
+
     SDL_RenderPresent(renderer);
 }
 

@@ -1,18 +1,19 @@
 #include "Explosion.h"
 
-void Explosion::Load(const char *path)
+Explosion::Explosion()
 {
-    temp = TextureManager::LoadTexture(path);
 }
 
-void Explosion::Draw(SDL_Rect dest)
+void Explosion::init(float xpos, float ypos, Manager *m, std::string id)
 {
 
-    SDL_Rect src;
-    src.x = 790;
-    src.y = 290;
-    src.w = 1030 - 790;
-    src.h = 480 - 290;
+    auto &e(m->addEntity());
+    e.addComponent<TransformComponent>(xpos, ypos, 258, 258, 1);
+    e.addComponent<SpriteComponent>("explosion");
+    e.addComponent<ColliderComponent>("explosion");
+    e.addGroup(Game::groupExplosions);
 
-    TextureManager::Draw(temp, src, dest, SDL_FLIP_NONE);
+    std::cout << "initiated" << std::endl;
+
+    //e.getComponent<TransformComponent>().velocity.x = -1;
 }

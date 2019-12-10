@@ -11,6 +11,7 @@
 #include <vector>
 #endif
 
+class mainmenu;
 class TextManager;
 class AssetManager;
 class ColliderComponent;
@@ -24,6 +25,10 @@ public:
    bool lev_com = false;
    bool gam_over = false;
    bool gam_paused = false;
+   //mainmenu *main_m;
+   bool menu_flag = true;
+   bool help = false;
+   Uint32 level_start = 0;
 
    void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
    void handleEvents();
@@ -44,7 +49,8 @@ public:
       groupColliders,
       groupBullets,
       groupScoreUps,
-      groupPowerUps
+      groupPowerUps,
+      groupExplosions
    };
 
    bool running()

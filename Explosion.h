@@ -1,16 +1,10 @@
-#pragma once
+#include "GameObject.h"
 
-#include "TextureManager.h"
-
-class Explosion
+class Explosion : public GameObject
 {
-
 private:
-    const char *path;
-    SDL_Texture *temp;
-
 public:
-    void Load(const char *path);
+    Explosion();
 
-    void Draw(SDL_Rect dest);
+    void init(float x, float y, Manager *m, std::string id);
 };

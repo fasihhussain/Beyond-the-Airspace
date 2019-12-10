@@ -11,12 +11,12 @@ public:
 
     HealthComponent()
     {
-        health = 150;
+        health = 200;
     }
 
     void init() override
     {
-        health = 150;
+        health = 200;
     }
 
     void update() override

@@ -12,12 +12,12 @@
 #include "ScoreUp.h"
 #include "screenDisplay.h"
 #include "mainmenu.h"
+#include "Missile.h"
 
 SDL_Event Game::event;
 SDL_Renderer *Game::renderer = nullptr;
 
 bool game_flag = false;
-//bool help = false;
 std::vector<ColliderComponent *> Game::colliders;
 
 std::string str, str1;
@@ -31,6 +31,9 @@ Enemy e;
 
 Bullet bullet;
 Uint32 last_bullet_fired = 0;
+
+Missile missile;
+Uint32 last_missile_fired = 0;
 
 Uint32 last_explosion_appear = 0;
 
@@ -54,10 +57,16 @@ Game::Game()
 {
 }
 
+bool Game::getGameState()
+{
+    return gam_over;
+}
+
 Game::~Game() {}
 
 void Game::init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
+
     int flags = 0;
 
     if (fullscreen)
@@ -96,6 +105,7 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
         assets->AddTexture("score", "assets/sp.png");
         assets->AddTexture("power", "assets/ps.png");
         assets->AddTexture("explosion", "assets/explosion.png");
+        assets->AddTexture("missile", "assets/Bomb_2.png");
 
         assets->AddFont("arial", "assets/arial.ttf", 16);
 
@@ -134,7 +144,6 @@ void Game::init(const char *title, int xpos, int ypos, int width, int height, bo
     else
     {
         isRunning = false;
-        std::cout << "2" << std::endl;
     }
 }
 
@@ -144,6 +153,7 @@ auto &bullets(manager.getGroup(Game::groupBullets));
 auto &powerups(manager.getGroup(Game::groupPowerUps));
 auto &scoreups(manager.getGroup(Game::groupScoreUps));
 auto &explosions(manager.getGroup(Game::groupExplosions));
+auto &missiles(manager.getGroup(Game::groupMissiles));
 
 void Game::update()
 {
@@ -183,6 +193,16 @@ void Game::update()
     if ((player.getComponent<TransformComponent>().position.y) > 720)
     {
         player.getComponent<TransformComponent>().position.y = 720;
+    }
+
+    if ((time.get_Time() - last_missile_fired) > 5000)
+    {
+        last_missile_fired = time.get_Time();
+        for (auto en : enemies)
+        {
+
+            missile.init(&manager, Vector2D((float)en->getComponent<TransformComponent>().position.x - 100, (float)en->getComponent<TransformComponent>().position.y + 110), Vector2D(-2, 0), 300, 1, "missile");
+        }
     }
 
     if ((time.get_Time() - last_power_arrive) > 31000)
@@ -234,6 +254,46 @@ void Game::update()
         }
     }
 
+    for (auto mis : missiles)
+    {
+        for (auto b : bullets)
+        {
+            if (Collision::AABB(b->getComponent<ColliderComponent>().collider, mis->getComponent<ColliderComponent>().collider))
+            {
+                b->destroy();
+                mis->destroy();
+            }
+        }
+    }
+
+    for (auto mis : missiles)
+    {
+        for (auto p : players)
+        {
+            if (Collision::AABB(p->getComponent<ColliderComponent>().collider, mis->getComponent<ColliderComponent>().collider))
+            {
+                mis->destroy();
+                p->getComponent<HealthComponent>().health -= 50;
+                if (p->getComponent<HealthComponent>().health <= 0)
+                {
+
+                    this->update();
+                    this->render();
+
+                    p->destroy();
+                    gam_over = true;
+                }
+            }
+        }
+    }
+
+    for (auto mis : missiles)
+    {
+        if (mis->getComponent<TransformComponent>().position.x < -200)
+        {
+            mis->destroy();
+        }
+    }
     for (auto b : bullets)
     {
         for (auto en : enemies)
@@ -339,6 +399,11 @@ void Game::render()
         b->draw();
     }
 
+    for (auto &mis : missiles)
+    {
+        mis->draw();
+    }
+
     for (auto &pow : powerups)
     {
         pow->draw();
@@ -391,7 +456,6 @@ void Game::handleEvents()
     {
     case SDL_QUIT:
         isRunning = false;
-        std::cout << "3" << std::endl;
         break;
 
     default:
@@ -417,12 +481,10 @@ void Game::handleEvents()
             if (gam_paused)
             {
                 this->pause_start_time = time.get_Time();
-                std::cout << this->pause_start_time << std::endl;
             }
             if (!gam_paused)
             {
                 this->pause_time += time.get_Time() - this->pause_start_time;
-                std::cout << this->pause_time << std::endl;
             }
 
             break;
@@ -433,11 +495,4 @@ void Game::handleEvents()
             break;
         }
     }
-}
-
-void Game::AddTile(int id, int x, int y)
-{
-    auto &tile(manager.addEntity());
-    tile.addComponent<TileComponent>(x, y, 32, 32, id);
-    tile.addGroup(groupColliders);
 }

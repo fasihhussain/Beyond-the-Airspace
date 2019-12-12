@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 	{
 		SDL_PollEvent(&evt);
 
-		std::cout << game->menu_flag << "and " << menu_m.showhelp << std::endl;
 		if (game->menu_flag == true)
 		{
 			SDL_RenderClear(game->renderer);
@@ -69,6 +68,7 @@ int main(int argc, char *argv[])
 		}
 		game->handleEvents();
 		game->update();
+
 		game->render();
 
 		frameTime = SDL_GetTicks() - frameStart;

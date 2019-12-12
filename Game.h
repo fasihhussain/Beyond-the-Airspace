@@ -37,12 +37,12 @@ public:
    void update();
    void render();
    void clean();
+   bool getGameState();
    static TextManager *tex;
    static SDL_Renderer *renderer;
    static SDL_Event event;
    static std::vector<ColliderComponent *> colliders;
    static AssetManager *assets;
-   static void AddTile(int id, int x, int y);
    enum groupLabels : std::size_t
    {
       groupMap,
@@ -52,7 +52,8 @@ public:
       groupBullets,
       groupScoreUps,
       groupPowerUps,
-      groupExplosions
+      groupExplosions,
+      groupMissiles
    };
 
    bool running()

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	{
 		SDL_PollEvent(&evt);
 
-		if (game->menu_flag == true)				//run the game once the user clicks on start button
+		if (game->menu_flag == true) //run the game once the user clicks on start button
 		{
 			SDL_RenderClear(game->renderer);
 
@@ -79,6 +79,8 @@ int main(int argc, char *argv[])
 	}
 
 	game->clean();
+	delete game;
+	game = nullptr;
 
 	return 0;
 }

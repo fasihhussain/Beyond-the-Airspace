@@ -195,7 +195,7 @@ void Game::update()
         player.getComponent<TransformComponent>().position.y = 720;
     }
 
-    if ((time.get_Time() - last_missile_fired) > 5000)
+    if ((time.get_Time() - last_missile_fired) > 6000)
     {
         last_missile_fired = time.get_Time();
         for (auto en : enemies)

@@ -11,8 +11,3 @@ void Missile::init(Manager *m, Vector2D pos, Vector2D vel, int range, int speed,
     projectile.addGroup(Game::groupMissiles);
     std::cout << "missile fired" << std::endl;
 }
-
-int Missile::getDamage()
-{
-    return damage;
-}

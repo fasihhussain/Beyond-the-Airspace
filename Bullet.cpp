@@ -11,8 +11,3 @@ void Bullet::init(Manager *m, Vector2D pos, Vector2D vel, int range, int speed, 
     projectile.addComponent<ColliderComponent>("Bullet");
     projectile.addGroup(Game::groupBullets);
 }
-
-int Bullet::getDamage()
-{
-    return damage;
-}

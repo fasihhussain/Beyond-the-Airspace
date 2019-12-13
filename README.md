@@ -35,6 +35,8 @@ Acknowledgement:
 - Discord helped us collaborate effectively 
 - VS Code Live Share also helped us to increase efficiency 
 
+UML Link:
+https://www.lucidchart.com/invitations/accept/499327f3-4aaf-47bb-a645-ca83d4f599cd
 
 YouTube Link:
 https://www.youtube.com/channel/UC6CEAZ5x0k-FgAvWE3JWb1g

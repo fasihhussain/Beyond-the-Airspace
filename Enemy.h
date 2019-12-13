@@ -3,18 +3,18 @@
 class Enemy : public GameObject
 {
 private:
-    int health = 150;
-    int xpos;
-    int ypos;
+    int health = 150; //
+    int xpos;         //basic attributes of an enemy plane
+    int ypos;         //
 
 public:
     Enemy();
 
-    void init(Manager *m, std::string id);
+    void init(Manager *m, std::string id); //initialize components
 
-    void setXY();
+    void setXY(); //update the position of plane
 
-    void take_damage(int damage);
+    void take_damage(int damage); //decrease health of the plane
 
-    int get_health();
+    int get_health(); //gets the health of the plane
 };

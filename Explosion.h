@@ -6,5 +6,5 @@ private:
 public:
     Explosion();
 
-    void init(float x, float y, Manager *m, std::string id);
+    void init(float x, float y, Manager *m, std::string id); //initialze components
 };

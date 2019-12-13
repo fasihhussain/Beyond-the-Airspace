@@ -16,5 +16,3 @@ int Missile::getDamage()
 {
     return damage;
 }
-
-void Missile::Follow(Vector2D pos) {}

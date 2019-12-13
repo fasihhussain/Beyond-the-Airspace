@@ -11,9 +11,9 @@ private:
 public:
     Background();
 
-    void update();
+    void update(); //moves the background backward on the screen
 
-    void Draw();
+    void Draw(); //draws the background on the screen
 
-    void Load();
+    void Load(); //loads the background that is displayed
 };

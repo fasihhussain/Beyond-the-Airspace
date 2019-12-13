@@ -22,21 +22,21 @@ public:
    Game();
    ~Game();
 
-   bool lev_com = false;
-   bool gam_over = false;
-   bool gam_paused = false;
+   bool lev_com = false;    //
+   bool gam_over = false;   //
+   bool gam_paused = false; //
    //mainmenu *main_m;
-   bool menu_flag = true;
-   bool help = false;
-   Uint32 pause_time = 0;
-   Uint32 level_start = 0;
-   Uint32 pause_start_time = 0;
+   bool menu_flag = true;       //used to determine the current game state
+   bool help = false;           //
+   Uint32 pause_time = 0;       //
+   Uint32 level_start = 0;      //
+   Uint32 pause_start_time = 0; //
 
    void init(const char *title, int xpos, int ypos, int width, int height, bool fullscreen);
    void handleEvents();
-   void update();
-   void render();
-   void clean();
+   void update(); //update the game objects
+   void render(); //determine the objects that will render on screen
+   void clean();  //deallocates memory
    bool getGameState();
    static TextManager *tex;
    static SDL_Renderer *renderer;

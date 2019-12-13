@@ -11,9 +11,9 @@ private:
     int ypos;
 
 public:
-    int getAddition();
+    int getAddition();              //increase plane health
 
-    void init(Manager *m, std::string id);
+    void init(Manager *m, std::string id);  //initialze components
 
-    void setXY();
+    void setXY();                   //update the location of power ups on screen
 };

@@ -13,11 +13,11 @@
 class mainmenu
 {
 public:
-    SDL_Texture *temp;
-    SDL_Texture *temp2;
-    SDL_Texture *temp3;
-    SDL_Texture *temp4;
-    SDL_Texture *temp5;
+    SDL_Texture *temp;          //background
+    SDL_Texture *temp2;         //start button
+    SDL_Texture *temp3;         //Quit button
+    SDL_Texture *temp4;         //Help button
+    SDL_Texture *temp5;         //instructions screen
     bool showhelp = false;
 
     mainmenu();
@@ -30,8 +30,8 @@ public:
     void renderhelp();
     void clean();
     bool checkstart();
-    void draw(SDL_Renderer *, SDL_Event, int *);
+    void draw(SDL_Renderer *, SDL_Event, int *);        //show the main menu
     SDL_Texture *loadTexture(std::string path);
-    void checkhelp();
-    void LT(const char *path1, const char *path2, const char *path3, const char *path4, const char *path5);
+    void checkhelp();          //display instructions
+    void LT(const char *path1, const char *path2, const char *path3, const char *path4, const char *path5);     //loads textures
 };

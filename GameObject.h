@@ -10,5 +10,5 @@ class GameObject
 {
 private:
 public:
-    virtual void init();
+    virtual void init(); //initlaize the specific component
 };

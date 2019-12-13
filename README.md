@@ -40,19 +40,19 @@ YouTube Link:
 https://www.youtube.com/channel/UC6CEAZ5x0k-FgAvWE3JWb1g
 
 Requirements:
-1.	Polymorphism is implemented in GameObject.cpp and ECS. It is also used in Projectiles.cpp, which has functions used its inherited members. 
+1.	Polymorphism is implemented in GameObject.cpp and ECS. It is also used in Projectiles.cpp, which has functions used by its inherited members. 
 2.	Design Patterns we have used:
-•	Singleton : Ensures only one object from each class is made
-•	Factory Pattern : Helps create objects from many different classes
-•	Builder Pattern: The Entity Component System helps set up the entities and group the objects from a single class
-•	State Pattern: changes an objects behavior when a state changes 
+
+  •	Singleton : Ensures only one object from each class is made
+  •	Factory Pattern : Helps create objects from many different classes
+  •	Builder Pattern: The Entity Component System helps set up the entities and group the objects from a single class
+  •	State Pattern: changes an objects behavior when a state changes 
+  
 3.	Menu is implemented which starts the game and renders instructions screen
 4.	Operator Overloading is used in Vector2d.cpp to implement position and velocity vectors
 5.	File I/O works separately but incorporated the code was not working properly
 6.	All the graphics and controls work smoothly
 7.	Code and UML match 
-
-
 
 Contribution:
 Each member of the team has contributed equally. The classes were not exactly divided into each person, instead each class was mostly made together using Discord and Live Share. 
@@ -61,7 +61,9 @@ Design Patterns we have used:
 •	Factory Pattern : Helps create objects from many different classes
 •	Builder Pattern: The Entity Component System helps set up the entities and group the objects from a single class
 •	State Pattern: changes an objects behavior when a state changes 
+
 Time it took to complete the Project: 105 hours 
+
 Note:
 A team member of our group was successfully able to create a File I/O system for high scores independently. However the code could not be effectively integrated into our main project and it was giving us issues. 
 

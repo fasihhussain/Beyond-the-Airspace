@@ -1,5 +1,7 @@
 # Beyond the Airspace (Fall 2019)
 
+This project was a part of the course OOP & Design Methodologies (CS 224) offered by Dr. Akhlaque Ahmed.
+
 ## Group Members
 1.	Nimrah Jawed – Team Lead 
 2.	Altaf Shaikh 
